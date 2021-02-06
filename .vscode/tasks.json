@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "g++ -o firestarter main.cpp -lX11 -lGL -lpthread -lpng -lstdc++fs -std=c++17",
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "run",
+      "type": "shell",
+      "command": "g++ -o firestarter main.cpp -lX11 -lGL -lpthread -lpng -lstdc++fs -std=c++17 && ./firestarter",
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
