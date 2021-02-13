@@ -66,10 +66,10 @@ class World {
         burnt = 0,
         road = 1,
         hoose = 2,
-        tower = 3,
-        roman = 4,
+        roman = 3,
+        apartments = 4,
         cylinder = 5,
-        building = 6,
+        tower = 6,
     };
     int8_t burnBuilding(const olc::vi2d &vTarget);
     void rebuild(); // there is no final victory
@@ -131,7 +131,7 @@ class FireStarter : public olc::PixelGameEngine {
   public:
     bool OnUserCreate() override
     {
-        spriteSheet = new olc::Sprite("assets/isometric_demo.png");
+        spriteSheet = new olc::Sprite("assets/tileset.png");
         map = world.getGrid();
         return true;
     }
@@ -157,7 +157,8 @@ class FireStarter : public olc::PixelGameEngine {
         if (GetKey(olc::Key::ENTER).bPressed)
             player.incrementScore(world.burnBuilding(vSelected));
 
-        SetPixelMode(olc::Pixel::MASK);
+        // SetPixelMode(olc::Pixel::MASK);
+        SetPixelMode(olc::Pixel::ALPHA); // TODO MASK
 
         map = world.getGrid(); // get the new world before each draw
         for (int y = 0; y < WorldSize.y; y++) {
@@ -174,41 +175,41 @@ class FireStarter : public olc::PixelGameEngine {
 
                 switch (tileState) {
                 case 0:
-                    // Invisble Tile
-                    DrawPartialSprite(vWorld.x, vWorld.y, spriteSheet, 1 * TileSize.x, 0,
-                                      TileSize.x, TileSize.y);
-                    break;
-                case 1:
-                    // Visible Tile
+                    // burnt
                     DrawPartialSprite(vWorld.x, vWorld.y, spriteSheet, 2 * TileSize.x, 0,
                                       TileSize.x, TileSize.y);
                     break;
+                case 1:
+                    // road
+                    DrawPartialSprite(vWorld.x, vWorld.y, spriteSheet, 1 * TileSize.x, 0,
+                                      TileSize.x, TileSize.y);
+                    break;
                 case 2:
-                    // Tree
+                    // house
                     DrawPartialSprite(vWorld.x, vWorld.y - TileSize.y, spriteSheet, 0 * TileSize.x,
                                       1 * TileSize.y, TileSize.x, TileSize.y * 2);
                     break;
                 case 3:
-                    // Spooky Tree
+                    // roman
                     DrawPartialSprite(vWorld.x, vWorld.y - TileSize.y, spriteSheet, 1 * TileSize.x,
                                       1 * TileSize.y, TileSize.x, TileSize.y * 2);
                     break;
                 case 4:
-                    // Beach
-                    DrawPartialSprite(vWorld.x, vWorld.y - TileSize.y, spriteSheet, 2 * TileSize.x,
-                                      1 * TileSize.y, TileSize.x, TileSize.y * 2);
+                    // apartment
+                    DrawPartialSprite(vWorld.x, vWorld.y - TileSize.y * 2, spriteSheet,
+                                      0 * TileSize.x, 3 * TileSize.y, TileSize.x, TileSize.y * 3);
                     break;
                 case 5:
-                    // Water
-                    DrawPartialSprite(vWorld.x, vWorld.y - TileSize.y, spriteSheet, 3 * TileSize.x,
-                                      1 * TileSize.y, TileSize.x, TileSize.y * 2);
+                    // cylinder
+                    DrawPartialSprite(vWorld.x, vWorld.y - TileSize.y * 3, spriteSheet,
+                                      0 * TileSize.x, 6 * TileSize.y, TileSize.x, TileSize.y * 4);
                     break;
                 }
             }
         }
 
         // draw the selector highlight
-        SetPixelMode(olc::Pixel::ALPHA);
+        // SetPixelMode(olc::Pixel::ALPHA);
         olc::vi2d vSelectedWorld = ToScreen(vSelected.x, vSelected.y);
         DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, spriteSheet, 0 * TileSize.x, 0,
                           TileSize.x, TileSize.y);
