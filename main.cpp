@@ -1,5 +1,6 @@
 #define OLC_PGE_APPLICATION
 #include "./include/olcPixelGameEngine.h"
+#include <iostream>
 #include <unordered_map>
 
 class Player {
@@ -32,14 +33,26 @@ class World {
   public:
     World(int width = 14, int height = 10) : gridSize(width, height)
     {
-        // grid = new int[width * height]{0};
+        // map "generation"
         grid = new int8_t[width * height]{
-            0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
-            0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 5, 1, 0, 1, 0, 5, 0, 1, 0, 0,
-            0, 0, 0, 1, 5, 3, 2, 1, 0, 4, 0, 1, 0, 3, 0, 0, 0, 1, 4, 0, 2, 1, 0, 3, 2, 1, 2, 0,
-            0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0,
-            0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+            0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, //
+            0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, //
+            0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, //
+            0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, //
+            0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, //
+            0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, //
+            1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, //
+            0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, //
+            0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, //
+            0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, //
         };
+
+        srand(time(NULL));
+        for (int i = 0; i < gridSize.x * gridSize.y; i++) {
+            if (grid[i] != 1) {
+                grid[i] = 2 + (rand() % 5); // magic number >:(
+            }
+        }
     }
 
   private:
@@ -76,8 +89,16 @@ int8_t World::burnBuilding(const olc::vi2d &Target)
     }
     return 0;
 }
-/* randomly rebuild 2 to 4 buildings */
-void World::rebuild() { std::cout << "finna nut\n"; }
+/* randomly rebuild a few sites */
+void World::rebuild()
+{
+    int glen = gridSize.x * gridSize.y;
+    for (int i = 0; i < 5; i++) { // magic numbers >:(
+        int target = rand() % glen;
+        if (grid[target] == TileStates::burnt)
+            grid[target] = 2 + (rand() % 5);
+    }
+}
 /* increment burning "counter" */
 void World::stepBurn(int8_t x, int8_t y, float time)
 {
@@ -191,6 +212,10 @@ class FireStarter : public olc::PixelGameEngine {
         olc::vi2d vSelectedWorld = ToScreen(vSelected.x, vSelected.y);
         DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, spriteSheet, 0 * TileSize.x, 0,
                           TileSize.x, TileSize.y);
+
+        // regen buildings
+        if ((rand() % 256) > 254)
+            world.rebuild();
 
         // cring text
         SetPixelMode(olc::Pixel::NORMAL);

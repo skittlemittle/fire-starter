@@ -15,4 +15,5 @@ Made this to try out pixelGameEngine
 ## Credits
 
 Art - [owlbio](https://www.instagram.com/the_owlbio/)
-engine - one lone coder
+
+engine - [one lone coder](https://www.youtube.com/channel/UC-yuWVUplUJZvieEligKBkA)
